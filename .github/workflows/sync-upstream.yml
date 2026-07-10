@@ -1,0 +1,77 @@
+name: Sync Upstream Taxonomy
+
+on:
+  schedule:
+    - cron: '0 0 * * 0' # Sunday midnight
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Check for upstream updates
+        id: check
+        run: |
+          curl -sL https://raw.githubusercontent.com/withmarbleapp/os-taxonomy/main/data/manifest.json -o /tmp/upstream-manifest.json
+          LOCAL_VER=$(node -e "console.log(require('./src/data/taxonomy/data/manifest.json').taxonomyVersion)")
+          UPSTREAM_VER=$(node -e "console.log(require('/tmp/upstream-manifest.json').taxonomyVersion)")
+          LOCAL_DATE=$(node -e "console.log(require('./src/data/taxonomy/data/manifest.json').generatedAt)")
+          UPSTREAM_DATE=$(node -e "console.log(require('/tmp/upstream-manifest.json').generatedAt)")
+          echo "local_version=$LOCAL_VER" >> $GITHUB_OUTPUT
+          echo "upstream_version=$UPSTREAM_VER" >> $GITHUB_OUTPUT
+          echo "local_date=$LOCAL_DATE" >> $GITHUB_OUTPUT
+          echo "upstream_date=$UPSTREAM_DATE" >> $GITHUB_OUTPUT
+          if [ "$LOCAL_VER" != "$UPSTREAM_VER" ] || [ "$LOCAL_DATE" != "$UPSTREAM_DATE" ]; then
+            echo "changed=true" >> $GITHUB_OUTPUT
+          else
+            echo "changed=false" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Download updated data files
+        if: steps.check.outputs.changed == 'true'
+        run: |
+          BASE="https://raw.githubusercontent.com/withmarbleapp/os-taxonomy/main"
+          for f in topics.json dependencies.json curriculum-standards.json clusters.json manifest.json; do
+            curl -sL "$BASE/data/$f" -o "src/data/taxonomy/data/$f"
+          done
+          for f in topics.schema.json dependencies.schema.json curriculum-standards.schema.json clusters.schema.json; do
+            curl -sL "$BASE/schema/$f" -o "src/data/taxonomy/schema/$f"
+          done
+          curl -sL "$BASE/PROVENANCE.md" -o "src/data/taxonomy/PROVENANCE.md"
+          curl -sL "$BASE/CHANGELOG.md" -o "src/data/taxonomy/CHANGELOG.md"
+          curl -sL "$BASE/CITATION.cff" -o "src/data/taxonomy/CITATION.cff"
+          curl -sL "$BASE/README.md" -o "src/data/taxonomy/README.md"
+          curl -sL "$BASE/LICENSE" -o "src/data/taxonomy/LICENSE"
+          curl -sL "$BASE/LICENSE-CONTENT" -o "src/data/taxonomy/LICENSE-CONTENT"
+
+      - name: Setup Node
+        if: steps.check.outputs.changed == 'true'
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Verify build
+        if: steps.check.outputs.changed == 'true'
+        run: npm install && npm run build
+
+      - name: Create PR
+        if: steps.check.outputs.changed == 'true' && success()
+        uses: peter-evans/create-pull-request@v7
+        with:
+          commit-message: "Sync taxonomy from withmarbleapp/os-taxonomy (${{ steps.check.outputs.upstream_version }})"
+          title: "⬆️ Sync upstream taxonomy (${{ steps.check.outputs.upstream_version }}, ${{ steps.check.outputs.upstream_date }})"
+          body: |
+            Automated sync from [withmarbleapp/os-taxonomy](https://github.com/withmarbleapp/os-taxonomy).
+
+            - **Local version:** ${{ steps.check.outputs.local_version }} (${{ steps.check.outputs.local_date }})
+            - **Upstream version:** ${{ steps.check.outputs.upstream_version }} (${{ steps.check.outputs.upstream_date }})
+
+            Includes updated data files, schemas, provenance, and citation.
+          branch: upstream-sync
+          delete-branch: true

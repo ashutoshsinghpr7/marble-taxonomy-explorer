@@ -1,0 +1,45 @@
+@import "tailwindcss";
+
+@theme {
+  --color-marble-50: #f0f4ff;
+  --color-marble-100: #dbe4ff;
+  --color-marble-200: #bac8ff;
+  --color-marble-300: #91a7ff;
+  --color-marble-400: #748ffc;
+  --color-marble-500: #5c7cfa;
+  --color-marble-600: #4c6ef5;
+  --color-marble-700: #4263eb;
+  --color-marble-800: #3b5bdb;
+  --color-marble-900: #364fc7;
+}
+
+body {
+  @apply bg-gray-50 text-gray-900 antialiased;
+}
+
+.topic-type-badge {
+  @apply text-xs font-medium px-2 py-0.5 rounded-full;
+}
+
+.topic-type-CONCEPTUAL {
+  @apply bg-blue-100 text-blue-700;
+}
+.topic-type-PROCEDURAL {
+  @apply bg-green-100 text-green-700;
+}
+.topic-type-REPRESENTATIONAL {
+  @apply bg-purple-100 text-purple-700;
+}
+.topic-type-LANGUAGE {
+  @apply bg-amber-100 text-amber-700;
+}
+.topic-type-META {
+  @apply bg-rose-100 text-rose-700;
+}
+
+.dep-strength-hard {
+  @apply text-red-600 font-medium;
+}
+.dep-strength-soft {
+  @apply text-gray-500;
+}

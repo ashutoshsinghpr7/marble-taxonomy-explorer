@@ -1,0 +1,80 @@
+---
+import '../styles/global.css';
+
+const { title } = Astro.props;
+const base = import.meta.env.BASE_URL;
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="icon" type="image/svg+xml" href={`${base}favicon.svg`} />
+    <link rel="icon" type="image/png" href={`${base}favicon.png`} />
+    <title>{title ? `${title} — Marble Taxonomy Explorer` : 'Marble Taxonomy Explorer'}</title>
+    <meta name="description" content="Browse and search the Marble Skill Taxonomy — 1,590 micro-topics across 8 subjects, connected by 3,221 prerequisite dependencies." />
+    <meta property="og:title" content={title ? `${title} — Marble Taxonomy Explorer` : 'Marble Taxonomy Explorer'} />
+    <meta property="og:description" content="Interactive explorer for 1,590 micro-topics across 8 subjects. Search, graph visualization, statistics, and learning pathways." />
+    <meta property="og:type" content="website" />
+    <meta property="og:image" content={`${base}og-image.png`} />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:type" content="image/png" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={title ? `${title} — Marble Taxonomy Explorer` : 'Marble Taxonomy Explorer'} />
+    <meta name="twitter:description" content="Interactive explorer for 1,590 micro-topics across 8 subjects. Search, graph visualization, statistics, and learning pathways." />
+    <meta name="twitter:image" content={`${base}og-image.png`} />
+  </head>
+  <body class="min-h-screen flex flex-col">
+    <header class="border-b border-gray-200 bg-white sticky top-0 z-50">
+      <nav class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-14 flex items-center justify-between">
+        <a href={base} class="flex items-center gap-2 font-bold text-lg text-marble-600 hover:text-marble-700 transition-colors">
+          <svg class="w-7 h-7" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <rect x="32" y="32" width="36" height="36" rx="6" fill="#6366f1" />
+            <circle cx="50" cy="50" r="6" fill="#fff" />
+            <circle cx="18" cy="30" r="9" fill="#3b82f6" />
+            <circle cx="82" cy="30" r="9" fill="#22c55e" />
+            <circle cx="18" cy="70" r="9" fill="#f59e0b" />
+            <circle cx="82" cy="70" r="9" fill="#a855f7" />
+            <circle cx="50" cy="18" r="9" fill="#ec4899" />
+            <line x1="35" y1="39" x2="25" y2="37" stroke="#6366f1" stroke-width="3" stroke-linecap="round" />
+            <line x1="65" y1="39" x2="75" y2="37" stroke="#6366f1" stroke-width="3" stroke-linecap="round" />
+            <line x1="35" y1="61" x2="25" y2="63" stroke="#6366f1" stroke-width="3" stroke-linecap="round" />
+            <line x1="65" y1="61" x2="75" y2="63" stroke="#6366f1" stroke-width="3" stroke-linecap="round" />
+            <line x1="50" y1="35" x2="50" y2="25" stroke="#6366f1" stroke-width="3" stroke-linecap="round" />
+          </svg>
+          <span>Marble Taxonomy Explorer</span>
+        </a>
+        <div class="flex items-center gap-4 text-sm">
+          <a href={`${base}subjects/mathematics`} class="text-gray-500 hover:text-gray-900 transition-colors">Subjects</a>
+          <a href={`${base}pathway`} class="text-gray-500 hover:text-gray-900 transition-colors">Pathway</a>
+          <a href={`${base}graph`} class="text-gray-500 hover:text-gray-900 transition-colors">Graph</a>
+          <a href={`${base}stats`} class="text-gray-500 hover:text-gray-900 transition-colors">Stats</a>
+          <a href={`${base}curriculum`} class="text-gray-500 hover:text-gray-900 transition-colors">Curriculum</a>
+          <a href="https://github.com/withmarbleapp/os-taxonomy" rel="noopener noreferrer" class="text-gray-400 hover:text-gray-600 transition-colors">
+            <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/></svg>
+          </a>
+        </div>
+      </nav>
+    </header>
+    <main class="flex-1">
+      <slot />
+    </main>
+    <footer class="border-t border-gray-200 bg-white py-8 mt-12">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center text-sm text-gray-500 space-y-2">
+        <p>
+          Data: <a href="https://github.com/withmarbleapp/os-taxonomy" class="text-marble-500 hover:text-marble-600 underline">Marble Skill Taxonomy (v1)</a>
+          &copy; <a href="https://withmarble.com" class="text-marble-500 hover:text-marble-600 underline">Generative Spark, Inc. (Marble)</a>
+          &mdash; licensed under
+          <a href="https://opendatacommons.org/licenses/odbl/1-0/" class="text-marble-500 hover:text-marble-600 underline">ODbL 1.0</a> (database)
+          and <a href="https://creativecommons.org/licenses/by-sa/4.0/" class="text-marble-500 hover:text-marble-600 underline">CC BY-SA 4.0</a> (content).
+        </p>
+        <p>
+          Community tool &mdash; not affiliated with Marble.
+          <span class="ml-2">Hosted on <a href="https://pages.github.com" class="text-marble-500 hover:text-marble-600 underline">GitHub Pages</a>.</span>
+        </p>
+      </div>
+    </footer>
+  </body>
+</html>

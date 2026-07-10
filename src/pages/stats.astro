@@ -1,0 +1,226 @@
+---
+import Base from '../layouts/Base.astro';
+import { computeStats } from '../lib/stats';
+import { SUBJECT_COLORS } from '../lib/types';
+
+const stats = computeStats();
+const base = import.meta.env.BASE_URL;
+---
+
+<Base title="Statistics">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <a href={base} class="text-sm text-marble-500 hover:text-marble-600 mb-4 inline-block">&larr; Home</a>
+    <h1 class="text-3xl font-bold text-gray-900 mb-8">Taxonomy Statistics</h1>
+
+    <!-- Overview cards -->
+    <div class="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-10">
+      <div class="bg-white rounded-lg border border-gray-200 p-5 text-center">
+        <div class="text-3xl font-bold text-marble-600">{stats.manifest.counts.topics.toLocaleString()}</div>
+        <div class="text-sm text-gray-500 mt-1">Topics</div>
+      </div>
+      <div class="bg-white rounded-lg border border-gray-200 p-5 text-center">
+        <div class="text-3xl font-bold text-marble-600">{stats.manifest.counts.dependencies.toLocaleString()}</div>
+        <div class="text-sm text-gray-500 mt-1">Prerequisites</div>
+      </div>
+      <div class="bg-white rounded-lg border border-gray-200 p-5 text-center">
+        <div class="text-3xl font-bold text-marble-600">{stats.domainCount}</div>
+        <div class="text-sm text-gray-500 mt-1">Domains</div>
+      </div>
+      <div class="bg-white rounded-lg border border-gray-200 p-5 text-center">
+        <div class="text-3xl font-bold text-marble-600">{stats.clusterCount}</div>
+        <div class="text-sm text-gray-500 mt-1">Age Clusters</div>
+      </div>
+    </div>
+
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-10">
+      <!-- Subject distribution -->
+      <div class="bg-white rounded-lg border border-gray-200 p-6">
+        <h2 class="text-lg font-semibold text-gray-900 mb-4">Subject Distribution</h2>
+        <div class="space-y-3">
+          {stats.subjectDistribution.map((s) => (
+            <div>
+              <div class="flex justify-between text-sm mb-1">
+                <span class="font-medium text-gray-700">{s.name}</span>
+                <span class="text-gray-500">{s.count} ({s.pct}%)</span>
+              </div>
+              <div class="w-full bg-gray-100 rounded-full h-2.5">
+                <div
+                  class="h-2.5 rounded-full transition-all"
+                  style={`width: ${Math.max(s.pct, 1)}%; background-color: ${s.color}`}
+                ></div>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      <!-- Topic type distribution -->
+      <div class="bg-white rounded-lg border border-gray-200 p-6">
+        <h2 class="text-lg font-semibold text-gray-900 mb-4">Topic Type Distribution</h2>
+        <div class="space-y-3">
+          {stats.typeDistribution.map((t) => (
+            <div>
+              <div class="flex justify-between text-sm mb-1">
+                <span class="font-medium text-gray-700 capitalize">{t.name.toLowerCase()}</span>
+                <span class="text-gray-500">{t.count} ({t.pct}%)</span>
+              </div>
+              <div class="w-full bg-gray-100 rounded-full h-2.5">
+                <div
+                  class="h-2.5 rounded-full bg-marble-500"
+                  style={`width: ${Math.max(t.pct, 1)}%`}
+                ></div>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+
+    <!-- Age distribution -->
+    <div class="bg-white rounded-lg border border-gray-200 p-6 mb-10">
+      <h2 class="text-lg font-semibold text-gray-900 mb-4">Topics by Age</h2>
+      <div class="grid grid-cols-4 sm:grid-cols-8 gap-2">
+        {stats.ageDistribution.map((a) => (
+          <div class="text-center">
+            <div class="text-xs text-gray-500 mb-1">{a.range}</div>
+            <div class="bg-marble-50 rounded h-20 flex items-end justify-center pb-1 relative">
+              <div
+                class="bg-marble-500 rounded w-full max-w-[40px] transition-all"
+                style={`height: ${Math.round((a.count / Math.max(...stats.ageDistribution.map((x) => x.count))) * 70)}%`}
+              ></div>
+            </div>
+            <div class="text-sm font-medium text-gray-700 mt-1">{a.count}</div>
+          </div>
+        ))}
+      </div>
+    </div>
+
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-10">
+      <!-- Most central topics -->
+      <div class="bg-white rounded-lg border border-gray-200 p-6">
+        <h2 class="text-lg font-semibold text-gray-900 mb-4">Most Central Topics</h2>
+        <div class="overflow-x-auto">
+          <table class="w-full text-sm">
+            <thead>
+              <tr class="text-left text-xs text-gray-500 uppercase tracking-wider">
+                <th class="pb-2 pr-2">#</th>
+                <th class="pb-2 pr-2">Topic</th>
+                <th class="pb-2 pr-2">Subject</th>
+                <th class="pb-2 text-right">Centrality</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-gray-100">
+              {stats.mostCentral.map((t, i) => (
+                <tr>
+                  <td class="py-1.5 pr-2 text-gray-400">{i + 1}</td>
+                  <td class="py-1.5 pr-2">
+                    <a href={`${base}topics/${t.id}`} class="text-marble-600 hover:text-marble-700 hover:underline font-medium">{t.name}</a>
+                  </td>
+                  <td class="py-1.5 pr-2">
+                    <span class="text-xs px-1.5 py-0.5 rounded text-white" style={`background-color: ${SUBJECT_COLORS[t.subject]}`}>{t.subject}</span>
+                  </td>
+                  <td class="py-1.5 text-right text-gray-600">{t.centrality}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Most connected topics -->
+      <div class="bg-white rounded-lg border border-gray-200 p-6">
+        <h2 class="text-lg font-semibold text-gray-900 mb-4">Most Connected Topics</h2>
+        <div class="overflow-x-auto">
+          <table class="w-full text-sm">
+            <thead>
+              <tr class="text-left text-xs text-gray-500 uppercase tracking-wider">
+                <th class="pb-2 pr-2">#</th>
+                <th class="pb-2 pr-2">Topic</th>
+                <th class="pb-2 text-right">Prereqs</th>
+                <th class="pb-2 text-right">Unlocks</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-gray-100">
+              {stats.mostPrerequisites.map((t, i) => (
+                <tr>
+                  <td class="py-1.5 pr-2 text-gray-400">{i + 1}</td>
+                  <td class="py-1.5 pr-2">
+                    <a href={`${base}topics/${t.id}`} class="text-marble-600 hover:text-marble-700 hover:underline font-medium">{t.name}</a>
+                  </td>
+                  <td class="py-1.5 text-right text-red-600">{t.prereqCount}</td>
+                  <td class="py-1.5 text-right text-green-600">{t.unlockCount}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-10">
+      <!-- Deepest prerequisite chains -->
+      <div class="bg-white rounded-lg border border-gray-200 p-6">
+        <h2 class="text-lg font-semibold text-gray-900 mb-4">Deepest Prerequisite Chains</h2>
+        <p class="text-xs text-gray-500 mb-3">Topics that depend on the longest chain of prior knowledge</p>
+        <div class="overflow-x-auto">
+          <table class="w-full text-sm">
+            <thead>
+              <tr class="text-left text-xs text-gray-500 uppercase tracking-wider">
+                <th class="pb-2 pr-2">#</th>
+                <th class="pb-2 pr-2">Topic</th>
+                <th class="pb-2">Subject</th>
+                <th class="pb-2 text-right">Depth</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-gray-100">
+              {stats.deepestChains.map((t, i) => (
+                <tr>
+                  <td class="py-1.5 pr-2 text-gray-400">{i + 1}</td>
+                  <td class="py-1.5 pr-2">
+                    <a href={`${base}topics/${t.id}`} class="text-marble-600 hover:text-marble-700 hover:underline font-medium">{t.name}</a>
+                  </td>
+                  <td class="py-1.5">
+                    <span class="text-xs px-1.5 py-0.5 rounded text-white" style={`background-color: ${SUBJECT_COLORS[t.subject]}`}>{t.subject}</span>
+                  </td>
+                  <td class="py-1.5 text-right">
+                    <span class={`font-medium ${t.depth >= 8 ? 'text-red-600' : t.depth >= 5 ? 'text-amber-600' : 'text-gray-600'}`}>{t.depth}</span>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Curriculum coverage -->
+      <div class="bg-white rounded-lg border border-gray-200 p-6">
+        <h2 class="text-lg font-semibold text-gray-900 mb-4">Curriculum Standard Coverage</h2>
+        <div class="space-y-3">
+          {stats.curriculumCoverage.map((c) => (
+            <div>
+              <div class="flex justify-between text-sm mb-1">
+                <span class="font-medium text-gray-700 truncate pr-2" title={c.name}>{c.name}</span>
+                <span class="text-gray-500 shrink-0">{c.linkedCount}/{c.count} ({c.pct}%)</span>
+              </div>
+              <div class="w-full bg-gray-100 rounded-full h-2">
+                <div
+                  class={`h-2 rounded-full ${c.pct > 50 ? 'bg-green-500' : c.pct > 25 ? 'bg-amber-500' : 'bg-red-400'}`}
+                  style={`width: ${Math.max(c.pct, 1)}%`}
+                ></div>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+
+    <!-- Averages -->
+    <div class="bg-marble-50 border border-marble-200 rounded-lg p-4 text-sm text-marble-800">
+      <strong>Aggregates:</strong>
+      Average centrality: {stats.avgCentrality} &middot;
+      Average prereqs per connected topic: {stats.avgPrereqs} &middot;
+      Dataset version: {stats.manifest.taxonomyVersion} &middot;
+      Generated: {new Date(stats.manifest.generatedAt).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}
+    </div>
+  </div>
+</Base>

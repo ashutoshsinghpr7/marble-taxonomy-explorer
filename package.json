@@ -1,0 +1,25 @@
+{
+  "name": "marble-taxonomy-explorer",
+  "type": "module",
+  "version": "0.1.0",
+  "license": "MIT",
+  "description": "Static docs-style browser and search engine for the Marble Skill Taxonomy",
+  "engines": {
+    "node": ">=22.12.0"
+  },
+  "scripts": {
+    "dev": "astro dev",
+    "build": "astro build",
+    "preview": "astro preview",
+    "astro": "astro"
+  },
+  "dependencies": {
+    "@astrojs/svelte": "^9.0.1",
+    "@tailwindcss/vite": "^4.3.2",
+    "@types/cytoscape": "^3.21.9",
+    "astro": "^7.0.7",
+    "cytoscape": "^3.34.0",
+    "svelte": "^5.56.4",
+    "tailwindcss": "^4.3.2"
+  }
+}

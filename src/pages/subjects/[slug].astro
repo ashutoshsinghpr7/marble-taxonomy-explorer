@@ -1,0 +1,71 @@
+---
+import type { GetStaticPaths } from 'astro';
+import Base from '../../layouts/Base.astro';
+import Search from '../../components/Search.svelte';
+import TopicCard from '../../components/TopicCard.astro';
+import { getTopicsBySubject, getDomainsForSubject } from '../../lib/data';
+import { SUBJECT_COLORS } from '../../lib/types';
+
+export const getStaticPaths: GetStaticPaths = () => {
+  const slugs = ['mathematics', 'science', 'english', 'history', 'personal-social-development', 'life-skills', 'computing', 'learning-to-learn'];
+  return slugs.map((slug) => ({ params: { slug } }));
+};
+const base = import.meta.env.BASE_URL;
+
+const SLUG_TO_SUBJECT: Record<string, string> = {
+  'mathematics': 'Mathematics',
+  'science': 'Science',
+  'english': 'English',
+  'history': 'History',
+  'personal-social-development': 'Personal & Social Development',
+  'life-skills': 'Life Skills',
+  'computing': 'Computing',
+  'learning-to-learn': 'Learning to Learn',
+};
+
+const { slug } = Astro.params;
+const subject = SLUG_TO_SUBJECT[slug];
+
+if (!subject) return Astro.redirect('/');
+
+const allTopics = getTopicsBySubject(subject);
+const domains = getDomainsForSubject(subject);
+const color = SUBJECT_COLORS[subject];
+
+const topicTypes = [...new Set(allTopics.map((t) => t.type))];
+---
+
+<Base title={subject}>
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <a href={base} class="text-sm text-marble-500 hover:text-marble-600 mb-4 inline-block">&larr; All Subjects</a>
+
+    <div class="flex items-center gap-3 mb-2">
+      <span class="w-3 h-3 rounded-full" style={`background-color: ${color}`}></span>
+      <h1 class="text-3xl font-bold text-gray-900">{subject}</h1>
+    </div>
+    <p class="text-gray-600 mb-6">{allTopics.length} micro-topics across {domains.length} domains</p>
+
+    <div class="mt-6">
+      <Search topics={allTopics} placeholder={`Search ${subject} topics...`} client:load />
+    </div>
+
+    {domains.map((domain) => {
+      const domainTopics = allTopics
+        .filter((t) => t.domain === domain)
+        .sort((a, b) => a.ageRangeStart - b.ageRangeStart);
+      return (
+        <section class="mt-10" id={domain.toLowerCase().replace(/\s+/g, '-')}>
+          <h2 class="text-xl font-semibold text-gray-900 mb-4 pb-2 border-b border-gray-200">
+            {domain}
+            <span class="text-sm text-gray-500 ml-2 font-normal">{domainTopics.length} topics</span>
+          </h2>
+          <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
+            {domainTopics.map((topic) => (
+              <TopicCard {topic} />
+            ))}
+          </div>
+        </section>
+      );
+    })}
+  </div>
+</Base>

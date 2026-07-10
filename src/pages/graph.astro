@@ -1,0 +1,46 @@
+---
+import GraphExplorer from '../components/GraphExplorer.svelte';
+import { buildGraphData } from '../lib/graph-data';
+import '../styles/global.css';
+
+const graphData = buildGraphData();
+const base = import.meta.env.BASE_URL;
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="icon" type="image/svg+xml" href={`${base}favicon.svg`} />
+    <link rel="icon" type="image/png" href={`${base}favicon.png`} />
+    <title>Graph Explorer — Marble Taxonomy Explorer</title>
+    <meta name="description" content="Interactive graph visualization of the Marble Skill Taxonomy — explore prerequisite relationships across 1,590 micro-topics." />
+    <meta property="og:title" content="Graph Explorer — Marble Taxonomy Explorer" />
+    <meta property="og:description" content="Interactive graph visualization — explore prerequisite relationships across 1,590 micro-topics. Neighborhood view and full graph mode." />
+    <meta property="og:type" content="website" />
+    <meta property="og:image" content={`${base}og-image.png`} />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:type" content="image/png" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="Graph Explorer — Marble Taxonomy Explorer" />
+    <meta name="twitter:description" content="Interactive graph visualization — explore prerequisite relationships across 1,590 micro-topics. Neighborhood view and full graph mode." />
+    <meta name="twitter:image" content={`${base}og-image.png`} />
+  </head>
+  <body style="overflow: hidden; height: 100vh; margin: 0; display: flex; flex-direction: column;">
+    <div style="flex: 1;">
+      <GraphExplorer
+        client:load
+        nodes={graphData.nodes}
+        edges={graphData.edges}
+      />
+    </div>
+    <footer style="text-align: center; padding: 4px 0; font-size: 10px; color: #9ca3af; background: #fff; border-top: 1px solid #e5e7eb;">
+      Data: <a href="https://github.com/withmarbleapp/os-taxonomy" style="color: #6366f1;">Marble Skill Taxonomy (v1)</a>
+      &copy; <a href="https://withmarble.com" style="color: #6366f1;">Generative Spark, Inc. (Marble)</a>
+      &mdash; ODbL 1.0 / CC BY-SA 4.0.
+      Community tool &mdash; not affiliated with Marble.
+    </footer>
+  </body>
+</html>

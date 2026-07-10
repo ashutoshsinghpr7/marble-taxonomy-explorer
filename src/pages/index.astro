@@ -1,0 +1,91 @@
+---
+import Base from '../layouts/Base.astro';
+import Search from '../components/Search.svelte';
+import { getTopics, getManifest } from '../lib/data';
+import { SUBJECTS, SUBJECT_COLORS } from '../lib/types';
+
+const topics = getTopics();
+const manifest = getManifest();
+const base = import.meta.env.BASE_URL;
+const subjectsWithCounts = SUBJECTS.map((s) => ({
+  name: s,
+  count: manifest.counts.topicsBySubject[s],
+  color: SUBJECT_COLORS[s],
+}));
+
+const formattedDate = new Date(manifest.generatedAt).toLocaleDateString('en-US', {
+  year: 'numeric',
+  month: 'long',
+  day: 'numeric',
+});
+---
+
+<Base title="Home">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+    <!-- Hero -->
+    <div class="text-center mb-12">
+      <h1 class="text-4xl sm:text-5xl font-bold text-gray-900 mb-4">
+        Marble <span class="text-marble-600">Skill Taxonomy</span> Explorer
+      </h1>
+      <p class="text-lg text-gray-600 max-w-2xl mx-auto">
+        Browse and search 1,590 micro-topics across 8 subjects, connected by 3,221 prerequisite dependencies.
+        <span class="text-gray-400"> Version {manifest.taxonomyVersion} &middot; {formattedDate}</span>
+      </p>
+    </div>
+
+    <!-- Search -->
+    <div class="max-w-2xl mx-auto mb-12">
+      <Search topics={topics} placeholder="Search 1,590 micro-topics..." client:load />
+    </div>
+
+    <!-- Stats -->
+    <div class="grid grid-cols-2 sm:grid-cols-4 gap-4 max-w-3xl mx-auto mb-16">
+      <div class="text-center p-4 bg-white rounded-lg border border-gray-200">
+        <div class="text-2xl font-bold text-marble-600">{manifest.counts.topics.toLocaleString()}</div>
+        <div class="text-sm text-gray-500">Micro-topics</div>
+      </div>
+      <div class="text-center p-4 bg-white rounded-lg border border-gray-200">
+        <div class="text-2xl font-bold text-marble-600">{manifest.counts.dependencies.toLocaleString()}</div>
+        <div class="text-sm text-gray-500">Prerequisites</div>
+      </div>
+      <div class="text-center p-4 bg-white rounded-lg border border-gray-200">
+        <div class="text-2xl font-bold text-marble-600">{SUBJECTS.length}</div>
+        <div class="text-sm text-gray-500">Subjects</div>
+      </div>
+      <div class="text-center p-4 bg-white rounded-lg border border-gray-200">
+        <div class="text-2xl font-bold text-marble-600">{manifest.counts.curriculumStandards.toLocaleString()}</div>
+        <div class="text-sm text-gray-500">Standards</div>
+      </div>
+    </div>
+
+    <!-- Subjects grid -->
+    <h2 class="text-2xl font-bold text-gray-900 mb-6 text-center">Browse by Subject</h2>
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 max-w-5xl mx-auto">
+      {subjectsWithCounts.map((s) => (
+        <a
+          href={`${base}subjects/${s.name.toLowerCase().replace(/\s*&\s*/g, '-').replace(/\s+/g, '-')}`}
+          class="block group bg-white rounded-lg border border-gray-200 p-5 hover:border-marble-300 hover:shadow-md transition-all"
+        >
+          <div class="flex items-center gap-3 mb-2">
+            <span
+              class="w-3 h-3 rounded-full shrink-0"
+              style={`background-color: ${s.color}`}
+            ></span>
+            <h3 class="font-semibold text-gray-900 group-hover:text-marble-600 transition-colors">{s.name}</h3>
+          </div>
+          <p class="text-sm text-gray-500">{s.count} micro-topics</p>
+        </a>
+      ))}
+    </div>
+
+    <!-- Curriculum link -->
+    <div class="text-center mt-16">
+      <a
+        href={`${base}curriculum`}
+        class="inline-flex items-center gap-2 text-marble-600 hover:text-marble-700 font-medium transition-colors"
+      >
+        Browse by curriculum standard &rarr;
+      </a>
+    </div>
+  </div>
+</Base>

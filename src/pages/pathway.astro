@@ -1,0 +1,11 @@
+---
+import Base from '../layouts/Base.astro';
+import PathwayTool from '../components/PathwayTool.svelte';
+import { getTopics } from '../lib/data';
+
+const allTopics = getTopics();
+---
+
+<Base title="Learning Pathway">
+  <PathwayTool client:load allTopics={allTopics} />
+</Base>

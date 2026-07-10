@@ -1,0 +1,44 @@
+---
+import Base from '../../layouts/Base.astro';
+import { getCurricula } from '../../lib/data';
+
+const curricula = getCurricula();
+const base = import.meta.env.BASE_URL;
+---
+
+<Base title="Curriculum Standards">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <a href={base} class="text-sm text-marble-500 hover:text-marble-600 mb-4 inline-block">&larr; Home</a>
+
+    <h1 class="text-3xl font-bold text-gray-900 mb-2">Curriculum Standards</h1>
+    <p class="text-gray-600 mb-8">
+      The taxonomy aligns to {curricula.length} national and international curriculum frameworks.
+    </p>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+      {curricula.map((c) => (
+        <div class="bg-white rounded-lg border border-gray-200 p-6 hover:border-marble-300 hover:shadow-md transition-all">
+          <div class="flex items-start justify-between mb-2">
+            <h2 class="text-lg font-semibold text-gray-900">{c.name}</h2>
+            <span class="text-xs text-gray-400 uppercase">{c.country}</span>
+          </div>
+          <div class="text-sm text-gray-500 mb-3">{c.version}</div>
+          <div class="flex items-center gap-4 text-sm">
+            <span class="text-marble-600 font-medium">{c.topicCount.toLocaleString()} standards</span>
+            {c.textIncluded ? (
+              <span class="text-green-600 text-xs bg-green-50 px-2 py-0.5 rounded">Full text</span>
+            ) : (
+              <span class="text-amber-600 text-xs bg-amber-50 px-2 py-0.5 rounded">Codes only</span>
+            )}
+          </div>
+          <div class="mt-3 text-xs text-gray-400 truncate">{c.license}</div>
+        </div>
+      ))}
+    </div>
+
+    <div class="mt-10 bg-amber-50 border border-amber-200 rounded-lg p-4 text-sm text-amber-800">
+      <strong>Note:</strong> Some curricula ship with codes/keys only (no verbatim text).
+      See the <a href="https://github.com/withmarbleapp/os-taxonomy/blob/main/PROVENANCE.md" class="underline text-amber-900">PROVENANCE.md</a> for licensing details.
+    </div>
+  </div>
+</Base>
