@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" fill="none">
+  <!-- Central node (hexagon) -->
+  <rect x="32" y="32" width="36" height="36" rx="6" fill="#6366f1" />
+  <!-- Inner dot -->
+  <circle cx="50" cy="50" r="6" fill="#fff" />
+
+  <!-- Connected outer nodes -->
+  <circle cx="18" cy="30" r="9" fill="#3b82f6" />
+  <circle cx="82" cy="30" r="9" fill="#22c55e" />
+  <circle cx="18" cy="70" r="9" fill="#f59e0b" />
+  <circle cx="82" cy="70" r="9" fill="#a855f7" />
+  <circle cx="50" cy="18" r="9" fill="#ec4899" />
+
+  <!-- Connection lines -->
+  <line x1="35" y1="39" x2="25" y2="37" stroke="#6366f1" stroke-width="3" stroke-linecap="round" />
+  <line x1="65" y1="39" x2="75" y2="37" stroke="#6366f1" stroke-width="3" stroke-linecap="round" />
+  <line x1="35" y1="61" x2="25" y2="63" stroke="#6366f1" stroke-width="3" stroke-linecap="round" />
+  <line x1="65" y1="61" x2="75" y2="63" stroke="#6366f1" stroke-width="3" stroke-linecap="round" />
+  <line x1="50" y1="35" x2="50" y2="25" stroke="#6366f1" stroke-width="3" stroke-linecap="round" />
+</svg>

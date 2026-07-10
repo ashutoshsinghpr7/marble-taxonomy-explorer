@@ -1,0 +1,188 @@
+---
+import type { GetStaticPaths } from 'astro';
+import Base from '../../layouts/Base.astro';
+import PrereqTree from '../../components/PrereqTree.svelte';
+import { getTopicById, getTopics, getStandardsForTopic } from '../../lib/data';
+import { getPrerequisites, getUnlocks, getPrereqChain } from '../../lib/graph';
+import { SUBJECT_COLORS } from '../../lib/types';
+
+export const getStaticPaths: GetStaticPaths = async () => {
+  const mod = await import('../../data/taxonomy/data/topics.json');
+  const topics = (mod.default?.topics ?? mod.topics) as any[];
+  return topics.map((t) => ({ params: { id: t.id } }));
+};
+
+const { id } = Astro.params;
+const topic = getTopicById(id);
+
+if (!topic) return Astro.redirect('/');
+
+const base = import.meta.env.BASE_URL;
+const color = SUBJECT_COLORS[topic.subject] || '#6b7280';
+const prereqs = getPrerequisites(topic.id);
+const unlocks = getUnlocks(topic.id);
+const prereqChain = getPrereqChain(topic.id);
+const standards = getStandardsForTopic(topic);
+---
+
+<Base title={topic.name}>
+  <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <a href={base} class="text-sm text-marble-500 hover:text-marble-600 mb-4 inline-block">&larr; Home</a>
+
+    <!-- Header -->
+    <div class="bg-white rounded-lg border border-gray-200 p-6 mb-6">
+      <div class="flex items-start justify-between gap-3 mb-3">
+        <h1 class="text-2xl font-bold text-gray-900">{topic.name}</h1>
+        <span class={`topic-type-badge topic-type-${topic.type} shrink-0`}>{topic.type}</span>
+      </div>
+
+      <div class="flex flex-wrap items-center gap-2 mb-4 text-sm">
+        <a href={`${base}subjects/${topic.subject.toLowerCase().replace(/\s*&\s*/g, '-').replace(/\s+/g, '-')}`}
+           class="px-2 py-0.5 rounded font-medium text-white"
+           style={`background-color: ${color}`}>
+          {topic.subject}
+        </a>
+        <span class="text-gray-400">&rsaquo;</span>
+        <span class="text-gray-600">{topic.domain}</span>
+        <span class="text-gray-300">|</span>
+        <span class="text-gray-500">Ages {topic.ageRangeStart}—{topic.ageRangeEnd}</span>
+        <span class="text-gray-300">|</span>
+        <span class="text-gray-400 text-xs">ID: {topic.id}</span>
+      </div>
+
+      <p class="text-gray-700 leading-relaxed">{topic.description}</p>
+    </div>
+
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+      <!-- Main content -->
+      <div class="lg:col-span-2 space-y-6">
+        <!-- Evidence -->
+        <div class="bg-white rounded-lg border border-gray-200 p-6">
+          <h2 class="text-lg font-semibold text-gray-900 mb-3">Mastery Evidence</h2>
+          <ul class="space-y-2">
+            {topic.evidence.map((e) => (
+              <li class="flex items-start gap-2 text-sm text-gray-700">
+                <svg class="w-5 h-5 text-green-500 shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                </svg>
+                {e}
+              </li>
+            ))}
+          </ul>
+        </div>
+
+        <!-- Assessment prompt -->
+        {topic.assessmentPrompt && (
+          <div class="bg-white rounded-lg border border-gray-200 p-6">
+            <h2 class="text-lg font-semibold text-gray-900 mb-3">Assessment Prompt</h2>
+            <p class="text-sm text-gray-600 italic">&ldquo;{topic.assessmentPrompt.replace(/\{\{name\}\}/g, '[child]')}&rdquo;</p>
+          </div>
+        )}
+
+        <!-- Curriculum standards -->
+        {standards.length > 0 && (
+          <div class="bg-white rounded-lg border border-gray-200 p-6">
+            <h2 class="text-lg font-semibold text-gray-900 mb-3">
+              Curriculum Standards
+              <span class="text-sm font-normal text-gray-500 ml-2">{standards.length} alignment{standards.length !== 1 ? 's' : ''}</span>
+            </h2>
+            <div class="space-y-3">
+              {standards.map(({ curriculum, standard }) => (
+                <div class="bg-gray-50 rounded p-3 border border-gray-100">
+                  <div class="flex items-center gap-2 mb-1">
+                    <code class="text-xs font-mono bg-gray-200 px-1.5 py-0.5 rounded text-gray-700">{standard.code}</code>
+                    <span class="text-xs text-gray-400">{curriculum.name.split(':')[0]}</span>
+                    {!curriculum.textIncluded && (
+                      <span class="text-xs bg-amber-100 text-amber-700 px-1.5 py-0.5 rounded">codes only</span>
+                    )}
+                  </div>
+                  {standard.data ? (
+                    <>
+                      <div class="text-sm font-medium text-gray-800">{standard.data.title}</div>
+                      {standard.data.description && (
+                        <p class="text-xs text-gray-600 mt-1 line-clamp-2">{standard.data.description}</p>
+                      )}
+                      <div class="text-xs text-gray-400 mt-1">
+                        {standard.data.subject || standard.data.domain}
+                        {standard.data.keyStage ? ` · ${standard.data.keyStage}` : ''}
+                      </div>
+                    </>
+                  ) : (
+                    <div class="text-sm text-gray-500">Standard code — full text not included in this dataset.</div>
+                  )}
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+      </div>
+
+      <!-- Sidebar: Prerequisites + Unlocks -->
+      <div class="space-y-6">
+        <!-- Prerequisites -->
+        <div class="bg-white rounded-lg border border-gray-200 p-6">
+          <h2 class="text-lg font-semibold text-gray-900 mb-3">
+            Prerequisites
+            <span class="text-sm font-normal text-gray-500 ml-2">{prereqs.length}</span>
+          </h2>
+          {prereqs.length > 0 ? (
+            <ul class="space-y-2">
+              {prereqs.map(({ topic: ptopic, dependency }) => (
+                <li>
+                  <a href={`${base}topics/${ptopic.id}`}
+                     class="block text-sm text-marble-600 hover:text-marble-700 hover:underline font-medium">
+                    {ptopic.name}
+                  </a>
+                  <div class="flex items-center gap-2 mt-0.5">
+                    <span class={`text-xs dep-strength-${dependency.strength}`}>{dependency.strength}</span>
+                    <span class="text-xs text-gray-500">Ages {ptopic.ageRangeStart}—{ptopic.ageRangeEnd}</span>
+                  </div>
+                </li>
+              ))}
+            </ul>
+          ) : (
+            <p class="text-sm text-gray-400">No prerequisites — this is a foundational topic.</p>
+          )}
+
+          <!-- Full prereq chain -->
+          {prereqChain.length > 0 && (
+            <details class="mt-4">
+              <summary class="text-sm text-marble-500 hover:text-marble-600 cursor-pointer font-medium">
+                Show full prerequisite tree
+              </summary>
+              <div class="mt-2">
+                <PrereqTree tree={prereqChain} depth={0} client:load />
+              </div>
+            </details>
+          )}
+        </div>
+
+        <!-- Unlocks -->
+        <div class="bg-white rounded-lg border border-gray-200 p-6">
+          <h2 class="text-lg font-semibold text-gray-900 mb-3">
+            Unlocks
+            <span class="text-sm font-normal text-gray-500 ml-2">{unlocks.length}</span>
+          </h2>
+          {unlocks.length > 0 ? (
+            <ul class="space-y-2">
+              {unlocks.map(({ topic: utopic, dependency }) => (
+                <li>
+                  <a href={`/topics/${utopic.id}`}
+                     class="block text-sm text-marble-600 hover:text-marble-700 hover:underline font-medium">
+                    {utopic.name}
+                  </a>
+                  <div class="flex items-center gap-2 mt-0.5">
+                    <span class={`text-xs dep-strength-${dependency.strength}`}>{dependency.strength}</span>
+                    <span class="text-xs text-gray-500">Ages {utopic.ageRangeStart}—{utopic.ageRangeEnd}</span>
+                  </div>
+                </li>
+              ))}
+            </ul>
+          ) : (
+            <p class="text-sm text-gray-400">No topics build on this one.</p>
+          )}
+        </div>
+      </div>
+    </div>
+  </div>
+</Base>
