@@ -14,15 +14,15 @@ Built with **Astro + Svelte + Tailwind CSS**.
 
 ## Screenshots
 
-![Homepage](screenshots/screenshot-home.png)
+![Homepage](https://raw.githubusercontent.com/ashutoshsinghpr7/marble-taxonomy-explorer/main/screenshots/screenshot-home.png)
 
 | [Graph Explorer](https://ashutoshsinghpr7.github.io/marble-taxonomy-explorer/graph) | [Statistics](https://ashutoshsinghpr7.github.io/marble-taxonomy-explorer/stats) |
 |---|---|
-| ![Graph](screenshots/screenshot-graph.png) | ![Stats](screenshots/screenshot-stats.png) |
+| ![Graph](https://raw.githubusercontent.com/ashutoshsinghpr7/marble-taxonomy-explorer/main/screenshots/screenshot-graph.png) | ![Stats](https://raw.githubusercontent.com/ashutoshsinghpr7/marble-taxonomy-explorer/main/screenshots/screenshot-stats.png) |
 
-| [Topic Detail](https://ashutoshsinghpr7.github.io/marble-taxonomy-explorer/topics/mt_Bf91Aoi1Hn) | [Learning Pathway](https://ashutoshsinghpr7.github.io/marble-taxonomy-explorer/pathway) |
+| [Topic Detail](https://ashutoshsinghpr7.github.io/marble-taxonomy-explorer/topics/mt_LKagN9GJPX) | [Learning Pathway](https://ashutoshsinghpr7.github.io/marble-taxonomy-explorer/pathway) |
 |---|---|
-| ![Topic](screenshots/screenshot-topic.png) | ![Pathway](screenshots/screenshot-pathway.png) |
+| ![Topic](https://raw.githubusercontent.com/ashutoshsinghpr7/marble-taxonomy-explorer/main/screenshots/screenshot-topic.png) | ![Pathway](https://raw.githubusercontent.com/ashutoshsinghpr7/marble-taxonomy-explorer/main/screenshots/screenshot-pathway.png) |
 
 [Live demo →](https://ashutoshsinghpr7.github.io/marble-taxonomy-explorer/)
 
