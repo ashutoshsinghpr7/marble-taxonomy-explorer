@@ -1,6 +1,6 @@
 {
   "version": "v1",
-  "clusterCount": 183,
+  "clusterCount": 176,
   "clusters": [
     {
       "subject": "English",
@@ -712,30 +712,6 @@
     },
     {
       "subject": "Science",
-      "domain": "Earth & Human Activity",
-      "ageRangeStart": 5,
-      "summary": "Your child is exploring how humans interact with the environment — learning about weather patterns, how animals and plants depend on their habitats, and ways we can protect our local environment."
-    },
-    {
-      "subject": "Science",
-      "domain": "Earth & Human Activity",
-      "ageRangeStart": 8,
-      "summary": "Your child is learning how to solve real-world problems — designing solutions to protect people and property from weather hazards like floods, storms, and extreme temperatures."
-    },
-    {
-      "subject": "Science",
-      "domain": "Earth & Human Activity",
-      "ageRangeStart": 9,
-      "summary": "Your child is learning about natural disasters and environmental impact — exploring how we can protect ourselves from earthquakes and floods, and understanding how our energy use affects the planet."
-    },
-    {
-      "subject": "Science",
-      "domain": "Earth & Human Activity",
-      "ageRangeStart": 10,
-      "summary": "Your child is learning how science helps communities protect our planet by exploring different ways people use scientific knowledge to conserve Earth's resources and protect the environment."
-    },
-    {
-      "subject": "Science",
       "domain": "Earth's Systems",
       "ageRangeStart": 5,
       "summary": "Your child is learning to observe and describe weather patterns and seasons, while exploring how plants and animals change their environment to meet their needs."
@@ -835,24 +811,6 @@
       "domain": "Forces & Motion",
       "ageRangeStart": 9,
       "summary": "Your child is learning about gravity and forces that resist motion like friction and air resistance, while discovering how simple machines like levers and pulleys can make tasks easier."
-    },
-    {
-      "subject": "Science",
-      "domain": "Heredity & Evolution",
-      "ageRangeStart": 6,
-      "summary": "Your child is observing how baby animals and plants are similar to their parents but also unique — beginning to understand the basic concept of inherited traits and individual differences."
-    },
-    {
-      "subject": "Science",
-      "domain": "Heredity & Evolution",
-      "ageRangeStart": 8,
-      "summary": "Your child is learning how traits are passed from parents to offspring, how environmental factors can influence characteristics, and how variations in traits help species survive and evolve over time, using fossil evidence to understand life in the past."
-    },
-    {
-      "subject": "Science",
-      "domain": "Heredity & Evolution",
-      "ageRangeStart": 10,
-      "summary": "Your child is learning about life on Earth over time — understanding how living things have changed throughout history and how fossils help us learn about ancient organisms."
     },
     {
       "subject": "Science",
